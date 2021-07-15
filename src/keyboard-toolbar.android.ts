@@ -1,12 +1,9 @@
-import { android as AndroidApp } from "tns-core-modules/application";
-import { screen } from "tns-core-modules/platform";
-import { View } from "tns-core-modules/ui/core/view";
-import { AnimationCurve } from "tns-core-modules/ui/enums";
-import { Page } from "tns-core-modules/ui/page";
-import { TabView } from "tns-core-modules/ui/tab-view";
-import { ad } from "tns-core-modules/utils/utils";
+import { Frame, Page, Screen, TabView, View } from "@nativescript/core";
+import { android as AndroidApp } from "@nativescript/core/application";
+import { AnimationCurve } from "@nativescript/core/ui/enums";
+import { ad } from "@nativescript/core/utils/utils";
 import { ToolbarBase } from "./keyboard-toolbar.common";
-import { topmost } from "tns-core-modules/ui/frame";
+
 
 export class Toolbar extends ToolbarBase {
   private startPositionY: number;
@@ -45,8 +42,8 @@ export class Toolbar extends ToolbarBase {
       };
 
       let pg;
-      if (topmost()) {
-        pg = topmost().currentPage;
+      if (Frame.topmost()) {
+        pg = Frame.topmost().currentPage;
       } else {
         pg = this.content.parent;
         while (pg && !(pg instanceof Page)) {
@@ -92,7 +89,7 @@ export class Toolbar extends ToolbarBase {
         const rect = new android.graphics.Rect();
         that.content.android.getWindowVisibleDisplayFrame(rect);
 
-        const newKeyboardHeight = (Toolbar.getUsableScreenSizeY() - rect.bottom) / screen.mainScreen.scale;
+        const newKeyboardHeight = (Toolbar.getUsableScreenSizeY() - rect.bottom) / Screen.mainScreen.scale;
         if (newKeyboardHeight <= 0 && that.lastKeyboardHeight === undefined) {
           return;
         }
@@ -141,7 +138,7 @@ export class Toolbar extends ToolbarBase {
       }
     }
 
-    const animateToY = this.startPositionY - this.lastKeyboardHeight - (this.showWhenKeyboardHidden === true ? 0 : (this.lastHeight / screen.mainScreen.scale)) - navbarHeight;
+    const animateToY = this.startPositionY - this.lastKeyboardHeight - (this.showWhenKeyboardHidden === true ? 0 : (this.lastHeight / Screen.mainScreen.scale)) - navbarHeight;
 
     parent.animate({
       translate: {x: 0, y: animateToY},
@@ -186,7 +183,7 @@ export class Toolbar extends ToolbarBase {
     this.navbarHeight = Toolbar.getNavbarHeight();
     this.isNavbarVisible = !!this.navbarHeight;
 
-    this.startPositionY = screen.mainScreen.heightDIPs - y - ((this.showWhenKeyboardHidden === true ? newHeight : 0) / screen.mainScreen.scale) - (this.isNavbarVisible ? this.navbarHeight : 0);
+    this.startPositionY = Screen.mainScreen.heightDIPs - y - ((this.showWhenKeyboardHidden === true ? newHeight : 0) / Screen.mainScreen.scale) - (this.isNavbarVisible ? this.navbarHeight : 0);
 
     if (this.lastHeight === undefined) {
       // this moves the keyboardview to the bottom (just move it offscreen/toggle visibility(?) if the user doesn't want to show it without the keyboard being up)
@@ -236,7 +233,7 @@ export class Toolbar extends ToolbarBase {
     const resources = (<android.content.Context>ad.getApplicationContext()).getResources();
     const resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
     if (resourceId > 0) {
-      return resources.getDimensionPixelSize(resourceId) / screen.mainScreen.scale;
+      return resources.getDimensionPixelSize(resourceId) / Screen.mainScreen.scale;
     }
     return 0;
   }
